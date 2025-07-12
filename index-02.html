@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>認証ページ</title>
+</head>
+<body>
+  <h2>ユーザー認証</h2>
+  <input type="text" id="username" placeholder="ユーザー名"><br>
+  <input type="text" id="code" placeholder="6桁コード" maxlength="6"><br>
+  <button onclick="check()">送信</button>
+
+  <p id="result"></p>
+
+  <script>
+    const authTable = {
+      "alice": "123456",
+      "bob": "654321"
+    };
+
+    const webhook = "https://your-worker-name.username.workers.dev"; // ← ここを自分のURLに！
+
+    function check() {
+      const user = document.getElementById("username").value.trim();
+      const code = document.getElementById("code").value.trim();
+      const result = document.getElementById("result");
+
+      if (authTable[user] === code) {
+        result.textContent = "認証成功！";
+        // Discordに通知
+        fetch(webhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user, code })
+        });
+      } else {
+        result.textContent = "認証失敗。";
+      }
+    }
+  </script>
+</body>
+</html>
